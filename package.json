@@ -1,6 +1,6 @@
 {
     "name": "sync-static-server",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Static server and synchronization from source",
     "scripts": {
         "up": "ncu --configFilePath ./_common --configFileName ncu_up_config.json && rimraf ./package-lock.json && npm i && ncu --configFilePath ./_common --configFileName ncu_config.json",
@@ -49,7 +49,6 @@
         "chai": "^4.3.6",
         "files-copier": "^0.1.1",
         "json-key-remover": "^0.1.4",
-        "rimraf": "^3.0.2",
         "superagent": "^8.0.0",
         "ts-mocha": "^10.0.0",
         "typescript": "^4.7.4"
@@ -76,6 +75,7 @@
         "jtomler": "^1.0.1",
         "logger-event-emitter": "^0.2.3",
         "md5-file": "^5.0.0",
-        "mime-types": "^2.1.35"
+        "mime-types": "^2.1.35",
+        "rimraf": "^3.0.2"
     }
 }

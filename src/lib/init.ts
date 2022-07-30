@@ -94,22 +94,26 @@ if (validate(config) === false) {
     process.exit(1);
 }
 
-let validate_source;
+if (config.web.synchronization.enable === true) {
 
-if (config.web.synchronization.source.type === "git") {
-    validate_source = ajv.compile(source_git_schema);
-    config.web.synchronization.source = <IGitSourceConfig>json_from_schema(config.web.synchronization.source, source_git_schema);
-}
+    let validate_source;
 
-if (validate_source === undefined) {
-    console.error(`${chalk.bgRed(" FATAL ")} Config key config.web.synchronization.source.type must be "git"`);
-    process.exit(1);
-}
+    if (config.web.synchronization.source.type === "git") {
+        validate_source = ajv.compile(source_git_schema);
+        config.web.synchronization.source = <IGitSourceConfig>json_from_schema(config.web.synchronization.source, source_git_schema);
+    }
 
-if (validate_source(config.web.synchronization.source) === false) {
-    const error_text = AjvErrorHelper(validate_source);
-    console.error(`${chalk.bgRed(" FATAL ")} Config key config.web.synchronization.source parsing error. Schema errors:\n${error_text}`);
-    process.exit(1);
+    if (validate_source === undefined) {
+        console.error(`${chalk.bgRed(" FATAL ")} Config key config.web.synchronization.source.type must be "git"`);
+        process.exit(1);
+    }
+
+    if (validate_source(config.web.synchronization.source) === false) {
+        const error_text = AjvErrorHelper(validate_source);
+        console.error(`${chalk.bgRed(" FATAL ")} Config key config.web.synchronization.source parsing error. Schema errors:\n${error_text}`);
+        process.exit(1);
+    }
+
 }
 
 config.api.prefix = `/${config.api.prefix.replace(/(^\/|\/$)/g,"")}`;

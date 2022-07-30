@@ -18,35 +18,39 @@ export class Controller implements IController {
         private readonly _logger: ILoggerEventEmitter
     ) {
         
-        this._source = new Source(this._config.source, this._logger.child(`${this._logger.name}:source`));
-        this._full_folder_path = path.resolve(process.cwd(), folder);
+        if (this._config.enable === true) {
 
-        if (fs.existsSync(this._full_folder_path) === true) {
-            sync_del(this._full_folder_path);
-            this._logger.debug(`Delete old folder ${chalk.gray(this._full_folder_path)}`);
-        }
+            this._source = new Source(this._config.source, this._logger.child(`${this._logger.name}:source`));
+            this._full_folder_path = path.resolve(process.cwd(), folder);
 
-        fs.mkdirSync(this._full_folder_path, {
-            recursive: true
-        });
-        
-        this._logger.info(`Folder ${chalk.cyan(this._full_folder_path)} created`);
-
-        this._source.on("change", (data: ISourceEvent[]) => {
-
-            for (const event of data) {
-                if (event.type === "add") {
-                    this._add(event);
-                }
-                if (event.type === "change") {
-                    this._change(event);
-                }
-                if (event.type === "delete") {
-                    this._delete(event);
-                }
+            if (fs.existsSync(this._full_folder_path) === true) {
+                sync_del(this._full_folder_path);
+                this._logger.debug(`Delete old folder ${chalk.gray(this._full_folder_path)}`);
             }
 
-        });
+            fs.mkdirSync(this._full_folder_path, {
+                recursive: true
+            });
+
+            this._logger.info(`Folder ${chalk.cyan(this._full_folder_path)} created`);
+
+            this._source.on("change", (data: ISourceEvent[]) => {
+
+                for (const event of data) {
+                    if (event.type === "add") {
+                        this._add(event);
+                    }
+                    if (event.type === "change") {
+                        this._change(event);
+                    }
+                    if (event.type === "delete") {
+                        this._delete(event);
+                    }
+                }
+
+            });
+            
+        }
 
     }
 
@@ -64,7 +68,7 @@ export class Controller implements IController {
         this._source.close();
     }
 
-    async _add (event: ISourceEvent): Promise<void> {
+    private async _add (event: ISourceEvent): Promise<void> {
         const full_file_path = path.resolve(this._full_folder_path, event.id);
         const dirname = path.dirname(full_file_path);
         try {
@@ -80,7 +84,7 @@ export class Controller implements IController {
         }
     }
 
-    async _delete (event: ISourceEvent): Promise<void> {
+    private async _delete (event: ISourceEvent): Promise<void> {
         const full_file_path = path.resolve(this._full_folder_path, event.id);
         try {
             if (fs.existsSync(full_file_path) === true) {
@@ -92,7 +96,7 @@ export class Controller implements IController {
         }
     }
 
-    async _change (event: ISourceEvent): Promise<void> {
+    private async _change (event: ISourceEvent): Promise<void> {
         const full_file_path = path.resolve(this._full_folder_path, event.id);
         try {
             if (fs.existsSync(full_file_path) === true) {

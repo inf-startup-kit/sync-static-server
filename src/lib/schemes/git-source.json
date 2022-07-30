@@ -3,6 +3,7 @@
     "properties": {
         "type": {
             "type": "string",
+            "default": "git",
             "const": "git"
         },
         "include_regexp": {
