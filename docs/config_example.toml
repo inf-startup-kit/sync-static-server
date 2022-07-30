@@ -11,7 +11,38 @@
     port = 3001                 # порт
     backlog = 511               # очередь баклога
     prefix = "/api"             # префикс
-    connection_timeout = 0      # таймаут сервера в милисекундах
-    keep_alive_timeout = 5000   # таймаут keep-alive сервера в милисекундах
+    connection_timeout = 0      # таймаут сервера в миллисекундах
+    keep_alive_timeout = 5000   # таймаут keep-alive сервера в миллисекундах
     body_limit = "1mb"          # максимальный размер тела запроса (b, kb, mb)
-    trust_proxy = false         # доверие proxy закголовку
+    trust_proxy = false         # доверие proxy заголовку
+
+[web]
+    enable = false              # активация WEB сервера
+    logging = false             # логирование запросов (ключ logger.level = "debug" или ниже)
+    hostname = "0.0.0.0"        # хост          
+    port = 3001                 # порт
+    backlog = 511               # очередь баклога
+    prefix = "/api"             # префикс
+    connection_timeout = 0      # таймаут сервера в миллисекундах
+    keep_alive_timeout = 5000   # таймаут keep-alive сервера в миллисекундах
+    body_limit = "1mb"          # максимальный размер тела запроса (b, kb, mb)
+    trust_proxy = false         # доверие proxy заголовку
+    [web.store]                 # настройка сервера
+        path = "static"         # папка root сервера
+        hidden = false          # видимость скрытых файлов
+    [web.synchronization]                                                   # синхронизация
+        enable = false                                                      # активация
+        [web.synchronization.source]                                        # настройка источника
+            type = "git"                                                    # тип источника
+            include_regexp = [".*"]                                         # файлы будут включены в поиск        
+            exclude_regexp = ["\\.md$"]                                     # файлы будут исключены из поиска
+            tmp = "tmp"                                                     # временная папка
+            size = "200kb"                                                  # максимальный размер файла
+            commit_count = 10                                               # количество хранимых коммитов
+            repository = "https://user:password@localhost/repository.git"   # репозиторий
+            branch = "main"                                                 # ветка репозитория
+            [namespaces.source.cron]            # настройка обновления
+                enable = true                   # активация
+                jitter = 3                      # интервал дрожания
+                interval = "*/15 * * * * *"     # интервал
+                time_zone = "Europe/Moscow"     # временная зона

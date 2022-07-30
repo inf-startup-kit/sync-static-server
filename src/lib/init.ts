@@ -5,9 +5,11 @@ import * as path from "path";
 import Ajv from "ajv";
 import jtomler from "jtomler";
 import json_from_schema from "json-from-default-schema";
+import * as source_git_schema from "./schemes/git-source.json";
 import * as config_schema from "./schemes/config.json";
 import { IAppConfig } from "./config.interfaces";
 import { AjvErrorHelper } from "./tools/ajv_error_helper";
+import { IGitSourceConfig } from "./source/interfaces";
 
 type TPackage = {
     version: string
@@ -62,13 +64,13 @@ program.parse(process.argv);
 
 const options = program.opts<TOptions>();
 
-if (process.env["TEMPLATE_CONFIG_PATH"] === undefined) {
+if (process.env["SYNC_STATIC_SERVER_CONFIG_PATH"] === undefined) {
 	if (options.config === undefined) {
 		console.error(`${chalk.bgRed(" FATAL ")} Not set --config key`);
 		process.exit(1);
 	}
 } else {
-	options.config = process.env["TEMPLATE_CONFIG_PATH"];
+	options.config = process.env["SYNC_STATIC_SERVER_CONFIG_PATH"];
 }
 
 const full_config_path = path.resolve(process.cwd(), options.config);
@@ -80,12 +82,33 @@ if (!fs.existsSync(full_config_path)) {
 
 const config: IAppConfig = <IAppConfig>json_from_schema(jtomler.parseFileSync(full_config_path), config_schema);
 
-const ajv = new Ajv({allErrors: true});
+const ajv = new Ajv({
+    allErrors: true, 
+    strict: false
+});
 const validate = ajv.compile(config_schema);
 
 if (validate(config) === false) {
     const error_text = AjvErrorHelper(validate);
     console.error(`${chalk.bgRed(" FATAL ")} Config schema errors:\n${error_text}`);
+    process.exit(1);
+}
+
+let validate_source;
+
+if (config.web.synchronization.source.type === "git") {
+    validate_source = ajv.compile(source_git_schema);
+    config.web.synchronization.source = <IGitSourceConfig>json_from_schema(config.web.synchronization.source, source_git_schema);
+}
+
+if (validate_source === undefined) {
+    console.error(`${chalk.bgRed(" FATAL ")} Config key config.web.synchronization.source.type must be "git"`);
+    process.exit(1);
+}
+
+if (validate_source(config.web.synchronization.source) === false) {
+    const error_text = AjvErrorHelper(validate_source);
+    console.error(`${chalk.bgRed(" FATAL ")} Config key config.web.synchronization.source parsing error. Schema errors:\n${error_text}`);
     process.exit(1);
 }
 

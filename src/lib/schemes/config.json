@@ -4,30 +4,30 @@
         "logger": {
             "type": "object",
             "default": {},
-            "env": "TEMPLATE_LOGGER",
+            "env": "SYNC_STATIC_SERVER_LOGGER",
             "properties": {
                 "name": {
                     "type": "string",
                     "default": "",
-                    "env": "TEMPLATE_LOGGER_NAME",
+                    "env": "SYNC_STATIC_SERVER_LOGGER_NAME",
                     "minLength": 0,
                     "maxLength": 32
                 },
                 "enable": {
                     "type": "boolean",
                     "default": true,
-                    "env": "TEMPLATE_LOGGER_ENABLE"
+                    "env": "SYNC_STATIC_SERVER_LOGGER_ENABLE"
                 },
                 "level": {
                     "type": "string",
                     "default": "error",
-                    "env": "TEMPLATE_LOGGER_LEVEL",
+                    "env": "SYNC_STATIC_SERVER_LOGGER_LEVEL",
                     "enum": ["fatal","info","error","warn","debug","trace"]
                 },
                 "timestamp": {
                     "type": "string",
                     "default": "none",
-                    "env": "TEMPLATE_LOGGER_TIMESTAMP",
+                    "env": "SYNC_STATIC_SERVER_LOGGER_TIMESTAMP",
                     "enum": ["full","short","unix","none"]
                 }
             },
@@ -41,29 +41,29 @@
         "api": {
             "type": "object",
             "default": {},
-            "env": "TEMPLATE_API",
+            "env": "SYNC_STATIC_SERVER_API",
             "properties": {
                 "enable": {
                     "type": "boolean",
                     "default": false,
-                    "env": "TEMPLATE_API_ENABLE"
+                    "env": "SYNC_STATIC_SERVER_API_ENABLE"
                 },
                 "logging": {
                     "type": "boolean",
                     "default": false,
-                    "env": "TEMPLATE_API_LOGGING"
+                    "env": "SYNC_STATIC_SERVER_API_LOGGING"
                 },
                 "hostname": {
                     "type": "string",
                     "default": "0.0.0.0",
                     "minLength": 1,
                     "maxLength": 64,
-                    "env": "TEMPLATE_API_HOSTNAME"
+                    "env": "SYNC_STATIC_SERVER_API_HOSTNAME"
                 },
                 "port": {
                     "type": "integer",
                     "default": 3001,
-                    "env": "TEMPLATE_API_PORT",
+                    "env": "SYNC_STATIC_SERVER_API_PORT",
                     "minimum": 1,
                     "maximum": 65535
                 },
@@ -72,37 +72,37 @@
                     "default": "/api",
                     "minLength": 0,
                     "maxLength": 32,
-                    "env": "TEMPLATE_API_PREFIX",
+                    "env": "SYNC_STATIC_SERVER_API_PREFIX",
                     "pattern": "^(\/[a-zA-Z]{1}|)[-a-zA-Z0-9\/]{0,31}$"
                 },
                 "backlog": {
                     "type": "integer",
                     "default": 511,
-                    "env": "TEMPLATE_API_BACKLOG",
+                    "env": "SYNC_STATIC_SERVER_API_BACKLOG",
                     "minimum": 1
                 },
                 "connection_timeout": {
                     "type": "integer",
                     "default": 0,
-                    "env": "TEMPLATE_API_CONNECTION_TIMEOUT",
+                    "env": "SYNC_STATIC_SERVER_API_CONNECTION_TIMEOUT",
                     "minimum": 0
                 },
                 "keep_alive_timeout": {
                     "type": "integer",
                     "default": 5000,
-                    "env": "TEMPLATE_API_KEEP_ALIVE_TIMEOUT",
+                    "env": "SYNC_STATIC_SERVER_API_KEEP_ALIVE_TIMEOUT",
                     "minimum": 1
                 },
                 "body_limit": {
                     "type": "string",
                     "default": "1mb",
-                    "env": "TEMPLATE_API_BODY_LIMIT",
+                    "env": "SYNC_STATIC_SERVER_API_BODY_LIMIT",
                     "pattern": "^[0-9]{1,10}(b|kb|mb)$"
                 },
                 "trust_proxy": {
                     "type": "boolean",
                     "default": false,
-                    "env": "TEMPLATE_API_TRUST_PROXY"
+                    "env": "SYNC_STATIC_SERVER_API_TRUST_PROXY"
                 }
             },
             "required": [
@@ -117,10 +117,137 @@
                 "trust_proxy",
                 "logging"
             ]
+        },
+        "web": {
+            "type": "object",
+            "default": {},
+            "env": "SYNC_STATIC_SERVER_WEB",
+            "properties": {
+                "enable": {
+                    "type": "boolean",
+                    "default": false,
+                    "env": "SYNC_STATIC_SERVER_WEB_ENABLE"
+                },
+                "logging": {
+                    "type": "boolean",
+                    "default": false,
+                    "env": "SYNC_STATIC_SERVER_WEB_LOGGING"
+                },
+                "hostname": {
+                    "type": "string",
+                    "default": "0.0.0.0",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "env": "SYNC_STATIC_SERVER_WEB_HOSTNAME"
+                },
+                "port": {
+                    "type": "integer",
+                    "default": 80,
+                    "env": "SYNC_STATIC_SERVER_WEB_PORT",
+                    "minimum": 1,
+                    "maximum": 65535
+                },
+                "prefix": {
+                    "type": "string",
+                    "default": "/",
+                    "minLength": 0,
+                    "maxLength": 32,
+                    "env": "SYNC_STATIC_SERVER_WEB_PREFIX",
+                    "pattern": "^(\/[a-zA-Z]{1}|)[-a-zA-Z0-9\/]{0,31}$"
+                },
+                "backlog": {
+                    "type": "integer",
+                    "default": 511,
+                    "env": "SYNC_STATIC_SERVER_WEB_BACKLOG",
+                    "minimum": 1
+                },
+                "connection_timeout": {
+                    "type": "integer",
+                    "default": 0,
+                    "env": "SYNC_STATIC_SERVER_WEB_CONNECTION_TIMEOUT",
+                    "minimum": 0
+                },
+                "keep_alive_timeout": {
+                    "type": "integer",
+                    "default": 5000,
+                    "env": "SYNC_STATIC_SERVER_WEB_KEEP_ALIVE_TIMEOUT",
+                    "minimum": 1
+                },
+                "body_limit": {
+                    "type": "string",
+                    "default": "1mb",
+                    "env": "SYNC_STATIC_SERVER_WEB_BODY_LIMIT",
+                    "pattern": "^[0-9]{1,10}(b|kb|mb)$"
+                },
+                "trust_proxy": {
+                    "type": "boolean",
+                    "default": false,
+                    "env": "SYNC_STATIC_SERVER_WEB_TRUST_PROXY"
+                },
+                "store": {
+                    "type": "object",
+                    "default": {},
+                    "env": "SYNC_STATIC_SERVER_WEB_STORE",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "default": "static",
+                            "minLength": 1,
+                            "maxLength": 256,
+                            "env": "SYNC_STATIC_SERVER_WEB_STORE_PATH"
+                        },
+                        "hidden": {
+                            "type": "boolean",
+                            "default": false,
+                            "env": "SYNC_STATIC_SERVER_WEB_HIDDEN"
+                        }
+                    },
+                    "required": [
+                        "path",
+                        "hidden"
+                    ]
+                },
+                "synchronization": {
+                    "type": "object",
+                    "default": {},
+                    "env": "SYNC_STATIC_SERVER_WEB_SYNCHRONIZATION",
+                    "properties": {
+                        "enable": {
+                            "type": "boolean",
+                            "default": false,
+                            "env": "SYNC_STATIC_SERVER_WEB_SYNCHRONIZATION_ENABLE"
+                        },
+                        "source": {
+                            "type": "object",
+                            "default": {},
+                            "env": "SYNC_STATIC_SERVER_WEB_SYNCHRONIZATION_SOURCE"
+                        }
+                    },
+                    "required": [
+                        "enable",
+                        "source"
+                    ]
+                }
+            },
+            "required": [
+                "enable",
+                "hostname",
+                "port",
+                "prefix",
+                "backlog",
+                "connection_timeout",
+                "keep_alive_timeout",
+                "body_limit",
+                "trust_proxy",
+                "logging",
+                "store",
+                "synchronization"
+            ]
         }
     },
     "required": [
         "logger",
-        "api"
+        "api",
+        "web"
     ]
 }

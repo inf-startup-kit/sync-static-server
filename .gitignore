@@ -6,3 +6,6 @@ dist
 Thumbs.db
 .vscode
 run.txt
+static
+tmp
+config_home.toml

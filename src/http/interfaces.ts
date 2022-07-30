@@ -1,10 +1,12 @@
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 import { ILoggerEventEmitter } from "logger-event-emitter";
+import { IWebServerConfig } from "../lib/config.interfaces";
 
-export interface ApiServerFastifyRequest extends FastifyRequest {
-    server: ApiServerFastifyInstance
+export interface IApiServerFastifyInstance extends FastifyInstance {
+    logger: ILoggerEventEmitter
 }
 
-export interface ApiServerFastifyInstance extends FastifyInstance {
+export interface IWebServerFastifyInstance extends FastifyInstance {
     logger: ILoggerEventEmitter
+    config: IWebServerConfig
 }

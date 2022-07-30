@@ -4,3 +4,7 @@
 [api]
     enable = true
     logging = true
+
+[web]
+    enable = true
+    logging = true

@@ -1,16 +1,31 @@
 import { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import Fastify from "fastify";
 import chalk from "chalk";
-import { IApiServerConfig } from "../lib/config.interfaces";
+import * as fs from "fs";
+import * as path from "path";
+import { IWebServerConfig } from "../lib/config.interfaces";
 import { getByteSize } from "../lib/tools/get_byte_size";
-import { routePing } from "./routes/ping";
-import { routeHealthcheck } from "./routes/healthcheck";
-import { routeHealthcheckReadiness } from "./routes/healthcheck_readiness";
-import { routeHealthcheckLiveness } from "./routes/healthcheck_liveness";
 import { ILoggerEventEmitter } from "logger-event-emitter";
-import { IApiServerFastifyInstance } from "./interfaces";
+import { routeStatic } from "./routes/static";
+import { IWebServerFastifyInstance } from "./interfaces";
 
-export function buildApiServer (config: IApiServerConfig, logger: ILoggerEventEmitter): FastifyInstance {
+export function buildWebServer (config: IWebServerConfig, logger: ILoggerEventEmitter): FastifyInstance {
+
+    const full_static_folder_path = path.resolve(process.cwd(), config.store.path);
+
+    if (fs.existsSync(full_static_folder_path) === false) {
+        fs.mkdirSync(full_static_folder_path, {
+            recursive: true
+        });
+        logger.info(`Folder ${chalk.cyan(full_static_folder_path)} created`);
+    }
+
+    const stat = fs.statSync(full_static_folder_path);
+
+    if (stat.isDirectory() === false) {
+        logger.fatal(`Path ${chalk.red(full_static_folder_path)} not folder`);
+        process.exit(1);
+    }
 
     const server = Fastify({
         logger: false,
@@ -79,32 +94,19 @@ export function buildApiServer (config: IApiServerConfig, logger: ILoggerEventEm
         });
     });
 
-    server.register( async function (fastify: IApiServerFastifyInstance) {
-
-        fastify.decorate("logger", logger);
-
-        routePing(fastify);
-        routeHealthcheck(fastify);
-        routeHealthcheckReadiness(fastify);
-        routeHealthcheckLiveness(fastify);
-
-    });
-
-    const prefix_v1 = `${config.prefix.replace(/\/$/,"")}/v1`;
-    const route_options_v1 = {
-        prefix: prefix_v1
+    const prefix = config.prefix.replace(/\/$/,"");
+    const route_options = {
+        prefix: prefix
     };
 
-    server.register( async function (fastify: IApiServerFastifyInstance) {
+    server.register( async function (fastify: IWebServerFastifyInstance) {
 
         fastify.decorate("logger", logger);
+        fastify.decorate("config", config);
 
-        routePing(fastify);
-        routeHealthcheck(fastify);
-        routeHealthcheckReadiness(fastify);
-        routeHealthcheckLiveness(fastify);
+        routeStatic(fastify);
 
-    }, route_options_v1);
+    }, route_options);
 
     return server;
 
