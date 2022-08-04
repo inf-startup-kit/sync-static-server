@@ -100,12 +100,13 @@ CMD [ "app.js", "--config", "config.toml" ]
 
 COPY --from=builder /dist /sync-static-server
 
-RUN  chown -R node:node /sync-static-server
+RUN chown -R node:node /sync-static-server && \
+    apk add --no-cache git && \
+    git --version
 
 USER node
 
 RUN cd /sync-static-server && \
     npm ci && \
     npm audit fix && \
-    node app.js -v && \
-    apk add --no-cache git
+    node app.js -v
